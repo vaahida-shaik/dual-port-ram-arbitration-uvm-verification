@@ -5,4 +5,4 @@
       assertion.sv
       package.sv
       interface.sv
-      top.sv
+      tb_top.sv
