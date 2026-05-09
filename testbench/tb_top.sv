@@ -12,6 +12,10 @@ intf_b vif_b (clk_b);
 
 dual_port_ram dut(.clk_a(clk_a), .clk_b(clk_b), .write_enable_a(vif_a.write_enable_a), .write_enable_b(vif_b.write_enable_b), .output_enable_a(vif_a.output_enable_a), .output_enable_b(vif_b.output_enable_b), .address_a(vif_a.address_a), .address_b(vif_b.address_b), .data_in_a(vif_a.data_in_a), .data_in_b(vif_b.data_in_b), .data_out_a(vif_a.data_out_a), .data_out_b(vif_b.data_out_b));
 
+
+dp_assertion sva(.clk_a(clk_a), .clk_b(clk_b), .write_enable_a(vif_a.write_enable_a), .write_enable_b(vif_b.write_enable_b), .output_enable_a(vif_a.output_enable_a), .output_enable_b(vif_b.output_enable_b), .address_a(vif_a.address_a), .address_b(vif_b.address_b));
+
+
 initial begin
 	clk_a = 0;
 
