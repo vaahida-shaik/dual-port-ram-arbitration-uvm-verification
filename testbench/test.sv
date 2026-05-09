@@ -24,9 +24,9 @@ class test1 extends uvm_test;
 		phase.raise_objection(this);
 		#10;
 		fork
-		seq_a1.start(env.ag_a.seqr_a);
-		seq_b1.start(env.ag_b.seqr_b);
-	join
+			seq_a1.start(env.ag_a.seqr_a);
+			seq_b1.start(env.ag_b.seqr_b);
+		join
 
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 10);
@@ -67,9 +67,9 @@ class test2 extends uvm_test;
 		phase.raise_objection(this);
 		#10;
 		fork
-		seq_a2.start(env.ag_a.seqr_a);
-		seq_b2.start(env.ag_b.seqr_b);
-	join
+			seq_a2.start(env.ag_a.seqr_a);
+			seq_b2.start(env.ag_b.seqr_b);
+		join
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 50);
 	endtask
@@ -109,9 +109,9 @@ class test3 extends uvm_test;
 		phase.raise_objection(this);
 		#10;
 		fork
-		seq_a3.start(env.ag_a.seqr_a);
-		seq_b3.start(env.ag_b.seqr_b);
-	join
+			seq_a3.start(env.ag_a.seqr_a);
+			seq_b3.start(env.ag_b.seqr_b);
+		join
 
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 10);
@@ -263,10 +263,10 @@ class test7 extends uvm_test;
 
 		phase.raise_objection(this);
 		#10;
-	//	fork
-		seq_a7.start(env.ag_a.seqr_a);
-		seq_b7.start(env.ag_b.seqr_b);
-//	join
+		fork
+			seq_a7.start(env.ag_a.seqr_a);
+			seq_b7.start(env.ag_b.seqr_b);
+		join
 
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 10);
@@ -308,9 +308,9 @@ class test8 extends uvm_test;
 		phase.raise_objection(this);
 		#10;
 		fork
-		seq_a8.start(env.ag_a.seqr_a);
-		seq_b8.start(env.ag_b.seqr_b);
-	join
+			seq_a8.start(env.ag_a.seqr_a);
+			seq_b8.start(env.ag_b.seqr_b);
+		join
 
 		phase.drop_objection(this);
 		phase.phase_done.set_drain_time(this, 10);
