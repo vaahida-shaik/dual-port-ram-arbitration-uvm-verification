@@ -11,13 +11,13 @@ package pack;
 	 
 	 typedef enum {PORT_A, PORT_B} port_e; 					// CG only support integral types
 
-	`include "seq_item.sv"
+	`include "sequence_item.sv"
 
 	`include "sequencer.sv"
 	`include "virtual_seqr.sv"
 
-	`include "sequence_a.sv"
-	`include "sequence_b.sv"
+	`include "sequenceA.sv"
+	`include "sequenceB.sv"
 	`include "virtual_seq.sv"
 
 	`include "driver.sv"
