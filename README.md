@@ -417,30 +417,6 @@ Detects:
 
 ---
 
-# 📂 Project Structure
-
-├── design.sv
-├── assertion.sv
-├── interface.sv
-├── package.sv
-├── top.sv
-│
-├── seq_item.sv
-├── sequencer.sv
-├── virtual_seqr.sv
-├── sequence_a.sv
-├── sequence_b.sv
-├── virtual_seq.sv
-│
-├── driver.sv
-├── monitor.sv
-├── agent.sv
-├── scoreboard.sv
-├── coverage.sv
-├── env.sv
-├── test.sv
-
----
 
 # ▶️ Compilation & Simulation
 Xcelium compile command:
