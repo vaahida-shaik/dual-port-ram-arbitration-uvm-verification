@@ -14,13 +14,13 @@ class my_sequence_a1 extends uvm_sequence #(transaction);
 		transaction tr;
 		vif_a = p_sequencer.vif_a;
 
-		$display("================================================================================ INITIAL_CHECK_A ================================================================================ \n");
-
-		foreach(tr.address[i]) begin
+		for(int i = 0; i < (1<< ADDR_WIDTH); i++) begin
 			tr = transaction::type_id::create("tr");
 			start_item(tr);
 			tr.port_id = PORT_A;
-			assert(tr.randomize() with {tr.write_enable == 0; tr.address == i;});
+			tr.write_enable = 0; 
+			tr.address = i;
+			tr.output_enable = 1;
 			tr.display("GENERATED");
 			finish_item(tr);
 			@(vif_a.sb_e);
@@ -49,13 +49,14 @@ class my_sequence_a2 extends uvm_sequence #(transaction);
 		transaction tr, tr_rd;
 		vif_a = p_sequencer.vif_a;
 
-		$display("================================================================================ Basic_READ_WRITE_A ================================================================================ \n");
-
 		// writes to port PORT_A
 			tr = transaction::type_id::create("tr");
 			start_item(tr);
-		//	assert(tr.randomize() with {tr.write_enable == 1;});
-			assert(tr.randomize() with {tr.write_enable == 1; tr.address == 0;});
+			tr.port_id = PORT_A;
+			assert(tr.randomize() with {
+				tr.write_enable == 1; 
+				tr.address inside {[0:10]};
+			});
 			tr.display("WRITE");
 			finish_item(tr);
 			@(vif_a.sb_e);
@@ -70,7 +71,6 @@ class my_sequence_a2 extends uvm_sequence #(transaction);
 			tr_rd.display("READ");
 			finish_item(tr_rd);
 			@(vif_a.sb_e);
-
 		
 		endtask
 endclass
@@ -94,9 +94,7 @@ class my_sequence_a3 extends uvm_sequence #(transaction);
 		transaction tr;
 		vif_a = p_sequencer.vif_a;
 
-		$display("================================================================================ ASYNCHRONOUS_CLOCK_A ================================================================================ \n");
-
-		repeat(5) begin
+		repeat(10) begin
 			tr = transaction::type_id::create("tr");
 			tr.port_id = PORT_A;
 			start_item(tr);
@@ -156,9 +154,7 @@ class my_sequence_a7 extends uvm_sequence #(transaction);
 		transaction tr, tr_rd;
 		vif_a = p_sequencer.vif_a;
 
-		$display("================================================================================ MULTIPLE_WRITE -> READ ================================================================================ \n");
-
-		for(int i = 10; i<20; i++) begin
+		for(int i = 10; i < 20; i++) begin
 			tr = transaction::type_id::create("tr");
 			start_item(tr);
 			tr.port_id = PORT_A;
@@ -167,11 +163,17 @@ class my_sequence_a7 extends uvm_sequence #(transaction);
 			finish_item(tr);
 			@(vif_a.sb_e);
 		end
-		for(int i =10; i<20;i++) begin
+
+		$display("\n");
+
+		// READ BACK
+		for(int i =10; i < 20;i++) begin
 			tr = transaction::type_id::create("tr");
 			tr.port_id = PORT_A;
 			start_item(tr);
-			assert(tr.randomize() with {tr.write_enable == 0; tr.address == i;});
+			tr.write_enable = 0; 
+			tr.output_enable =1;
+			tr.address = i;
 			tr.display("READ");	
 			finish_item(tr);
 			@(vif_a.sb_e);
@@ -199,8 +201,6 @@ class my_sequence_a8 extends uvm_sequence #(transaction);
 		transaction tr, tr_rd;
 		vif_a = p_sequencer.vif_a;
 
-		$display("================================================================================ ALTERNATE_WRITE_READ ================================================================================ \n");
-
 		repeat(5) begin
 			tr = transaction::type_id::create("tr");
 			start_item(tr);
@@ -213,8 +213,12 @@ class my_sequence_a8 extends uvm_sequence #(transaction);
 			tr_rd = transaction::type_id::create("tr_rd");
 			tr_rd.port_id = PORT_A;
 			start_item(tr_rd);
-			assert(tr_rd.randomize() with {tr_rd.write_enable == 0; tr_rd.address == tr.address;});
+			tr_rd.write_enable = 0; 
+			tr_rd.output_enable = 1;
+			tr_rd.address = tr.address;
 			tr_rd.display("READ");
+			$display("\n");
+
 			finish_item(tr_rd);
 			@(vif_a.sb_e);
 		end
