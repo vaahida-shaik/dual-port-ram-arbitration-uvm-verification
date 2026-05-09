@@ -2,46 +2,47 @@ class ref_mod extends uvm_object;
 	`uvm_object_utils(ref_mod)
 
   	logic [DATA_WIDTH-1:0] exp_mem[0:DEPTH-1];
-  	bit flag [0:DEPTH-1] ;
+  	bit flag_used [0:DEPTH-1] ;
 
   	function new(string name = "ref_mod");
    		 super.new(name);
 		 foreach(exp_mem[i]) begin
 	   		exp_mem[i] = 8'b0;
-	    		flag[i] = 0;
+	    		flag_used[i] = 0;
    		 end
 
   	endfunction
 
   
-  	function void write(transaction tr);
-	
-		int new_addr;
+  	function void write_a(transaction tr);
+		exp_mem[tr.address] = tr.data_in;
+		flag_used[tr.address] = 1;
+	endfunction
+
+	function void write_b(transaction tr);
+
+		int free_addr;
 	   
-	  	if(tr.write_enable) begin
-
-			if(tr.port_id == PORT_A) begin
-            			exp_mem[tr.address] = tr.data_in;
-            			flag[tr.address] = 1;	
-			end
-
-			else if(tr.port_id == PORT_B)begin 
-				if(flag[tr.address] == 0) begin
-					exp_mem[tr.address] = tr.data_in;
-            				flag[tr.address] = 1;
-				end
-				else begin
-					new_addr = tr.address+1;
-
-					while(new_addr < DEPTH && flag[new_addr])
-						new_addr++;
-					if(new_addr < DEPTH) begin
-						exp_mem[new_addr] = tr.data_in;
-						flag[new_addr] = 1;
-					end
+		if(flag_used[tr.address] == 0) begin
+			exp_mem[tr.address] = tr.data_in;
+            		flag_used[tr.address] = 1;
+		end
+				
+		else begin
+			free_addr = -1;
+			for(int i = tr.address+1; i < DEPTH; i++) begin
+				if(flag_used[i] == 0) begin
+					free_addr = i;
+					break;
 				end
 			end
-        	end
+
+			if(free_addr != -1) begin
+				exp_mem[free_addr] = tr.data_in;
+				flag_used[free_addr] = 1;
+			end
+		end
+	
 	endfunction
 	
 	function logic [DATA_WIDTH-1:0] read(transaction tr);
@@ -85,10 +86,10 @@ class scoreboard extends uvm_component;
 
   // Called whenever monitor sends a transaction
   	function void write_port_a(transaction tr);
-		
 		tr.port_id = PORT_A;
-		if(tr.write_enable)
-			rm.write(tr);
+
+		if(tr.write_enable) 
+			rm.write_a(tr);
 		else if(tr.output_enable)
 			read_q.push_back(tr);
 	cov.sample(tr);
@@ -98,7 +99,7 @@ class scoreboard extends uvm_component;
   	function void write_port_b(transaction tr);
 		tr.port_id = PORT_B;
 		if(tr.write_enable)
-			rm.write(tr);
+			rm.write_b(tr);
 		else if(tr.output_enable)
 			read_q.push_back(tr);
 
@@ -129,4 +130,3 @@ class scoreboard extends uvm_component;
 		
 	endfunction
 endclass
-
